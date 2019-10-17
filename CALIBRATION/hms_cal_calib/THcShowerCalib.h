@@ -52,15 +52,25 @@ class THcShowerCalib {
   void SaveRawData();
   void FillCutBranch();
   void FillHitsGains();
+  Double_t GetDeltaMin(){return fDeltaMin;};  
+  Double_t GetDeltaMax(){return fDeltaMax;};  
+  Double_t GetBetaMin(){return fBetaMin;};  
+  Double_t GetBetaMax(){return fBetaMax;};  
+  Double_t GetCerMin(){return fCerMin;};  
 
   TH1F* hEunc;
   TH1F* hEuncSel;
   TH1F* hEcal;
   TH1F* hEcalNoCor;
+
   TH1F* hCer;
   TH1F* hP;
   TH1F* hDelta;
   TH1F* hBeta;
+
+  //  TH1F* hNtrack;
+  //  TH1F* hNclust;
+
   TH2F* hDPvsEcal;
   TH2F* hETAvsEPR;
   TH2F* hCaloPos;
@@ -70,18 +80,16 @@ class THcShowerCalib {
   TH2F* ta2;
   TH2F* ta3;
   TH2F* ta4;
+  TH2F* pr1a;
+  TH2F* ta2a;
+  TH2F* ta3a;
+  TH2F* ta4a;
   TH2F* pmtList;
   TH2F* cMat;
   TH2F* yCalVsEp;
   TH2F* xCalVsEp;
-  TH1F* pos1pr;
-  TH1F* neg1pr;
-  TH1F* pos2ta;
-  TH1F* neg2ta;
-  TH1F* pos3ta;
-  TH1F* neg3ta;
-  TH1F* pos4ta;
-  TH1F* neg4ta;
+ 
+  TH1F **hAdc;
 
  private:
 
@@ -123,7 +131,7 @@ class THcShowerCalib {
 
   // Track parameters.
 
-  double          H_tr_n;
+  Double_t          H_tr_n;
   Double_t        H_tr_p;
   Double_t        H_tr_x;   //X FP
   Double_t        H_tr_xp;
@@ -407,7 +415,8 @@ void THcShowerCalib::Init() {
   hCer = new TH1F("hCer","H.cer.npeSum",210, -0.5, 20.5);
   hP = new TH1F("hP","H.gtr.p",100, 0, 12);
   hDelta = new TH1F("hDelta","H.gtr.dp",100, -12, 12);
-  hBeta = new TH1F("hBeta","H.hod.beta",100, 0, 2);
+  //  hNtrack = new TH1F("hNtrack","H.dc.ntrack",51, -0.5, 50.5);
+  //  hNclust = new TH1F("hNclust","H.cal.nclust",21, -0.5, 20.5);
 
   hDPvsEcal = new TH2F("hDPvsEcal", "#DeltaP versus Edep/P ",
 		       150,0.,1.5, 250,-12.5,12.5);
@@ -415,7 +424,7 @@ void THcShowerCalib::Init() {
 		       300,0.,1.5, 300,0.,1.5);
   hCaloPos = new TH2F("hCaloPos", "Tracks Projected to Calorimeter",100,YMIN-10, YMAX+10, 100, XMIN-10, XMAX+10);
   hExitPos = new TH2F("hExitPos", "Tracks Projected to Dipole Exit",100,-50, 50, 100, -50, 50);
-  hClusTrk = new TH2F("hClusTrk","nTracks vs nClusters",9,-0.5,8, 41,-0.5,40.5);
+  hClusTrk = new TH2F("hClusTrk","nTracsk vs nClusters",9,-0.5,8, 41,-0.5,40.5);
   yCalVsEp = new TH2F("yCalVsEp","Y_calo vs E/p", 150, 0, 1.5, 100,YMIN-10,YMAX+10);
 
   Double_t padH=(XMAX - XMIN)/13; //Paddle Height
@@ -426,18 +435,17 @@ void THcShowerCalib::Init() {
   ta3= new TH2F("ta3","Shower (Layer3)"   ,1, .5, 1.5, 13, 0.5, 13.5);
   ta4= new TH2F("ta4","Shower (Layer4)"   ,1, .5, 1.5, 13, 0.5, 13.5);
 
+  pr1a= new TH2F("pr1a","Preshower (Layer1)",2, .8, 2.8, 13, 0.5, 13.5);
+  ta2a= new TH2F("ta2a","Shower (Layer2)"   ,2, .8, 2.8, 13, 0.5, 13.5);
+  ta3a= new TH2F("ta3a","Shower (Layer3)"   ,1, .7, 1.7, 13, 0.5, 13.5);
+  ta4a= new TH2F("ta4a","Shower (Layer4)"   ,1, .7, 1.7, 13, 0.5, 13.5);
+
   pmtList= new TH2F("pmtList","Signal vs Block# of pmt_hits_list",   79,-0.5,78.5, 100, 0, 100);
   cMat= new TH2F("cMat","Correlation Matrix",   78,-0.5,77.5,78,-0.5,77.5);
 
-  pos1pr = new TH1F("pos1pr","H.cal.1pr.goodPosAdcPulseInt",100,0,100);
-  neg1pr = new TH1F("neg1pr","H.cal.1pr.goodNegAdcPulseInt",100,0,100);
-  pos2ta = new TH1F("pos2ta","H.cal.2ta.goodPosAdcPulseInt",100,0,100);
-  neg2ta = new TH1F("neg2ta","H.cal.2ta.goodNegAdcPulseInt",100,0,100);
-  pos3ta = new TH1F("pos3ta","H.cal.3ta.goodPosAdcPulseInt",100,0,100);
-  neg3ta = new TH1F("neg3ta","H.cal.3ta.goodNegAdcPulseInt",100,0,100);
-  pos4ta = new TH1F("pos4ta","H.cal.4ta.goodPosAdcPulseInt",100,0,100);
-  neg4ta = new TH1F("neg4ta","H.cal.4ta.goodNegAdcPulseInt",100,0,100);
 
+  hAdc = new TH1F*[THcShTrack::fNpmts];
+  for(UInt_t i=0; i<THcShTrack::fNpmts; i++){hAdc[i]=new TH1F(Form("hADC%d",i),"pulseInts",25,0.1,100);}
 
   // Initialize qumulative quantities.
   
@@ -493,13 +501,17 @@ void THcShowerCalib::CalcThresholds() {
       //    cout << "CalcThreshods: nev=" << nev << "  Enorm=" << Enorm << endl;
     }
 
-    if (nev > 300000) break;
+    if (nev > 200000) break;
   };
   //wph modifing the code to fit +/- sigma from peak
   //Double_t max
 
 
   //  hEunc->Fit("gaus","0","",0.5, 1.5);
+  Double_t maxBin= hEunc->GetMaximumBin();
+  Double_t maxValue= hEunc->GetBinCenter(maxBin);
+  fEuncGFitLo=fEuncGFitLo+maxValue;
+  fEuncGFitHi=fEuncGFitHi+maxValue;
   hEunc->Fit("gaus","","",fEuncGFitLo, fEuncGFitHi);
   hEunc->GetFunction("gaus")->SetLineColor(2);
   hEunc->GetFunction("gaus")->SetLineWidth(1);
@@ -507,8 +519,8 @@ void THcShowerCalib::CalcThresholds() {
   TF1 *fit = hEunc->GetFunction("gaus");
   Double_t gmean  = fit->GetParameter(1);
   Double_t gsigma = fit->GetParameter(2);
-  fLoThr = gmean - 3*gsigma;
-  fHiThr = gmean + 3.*gsigma;
+  fLoThr = gmean - 3.0*gsigma;
+  fHiThr = gmean + 3.0*gsigma;
   cout << "CalcThreshods: fLoThr=" << fLoThr << "  fHiThr=" << fHiThr 
        << "  nev=" << nev << endl;
 
@@ -921,6 +933,7 @@ void THcShowerCalib::FillHEcal() {
   for (UInt_t ientry=fNstart; ientry<fNstop; ientry++) {
 
     if (ReadShRawTrack(trk, ientry)) {
+
       //    trk.Print(cout);
       //************wph*************
       Double_t  xCalo= H_tr_x + H_tr_xp*D_CALO_FP ;  //could have done trk.GetX()
@@ -934,17 +947,18 @@ void THcShowerCalib::FillHEcal() {
       //       Causes Seg Fault
       //       for(UInt_t i=0; i<THcShTrack::fNpmts;i++)
       //	 {
-      for(UInt_t i=1; i< THcShTrack::fNrows; i++)
+      
+      for(UInt_t i=0; i< THcShTrack::fNrows; i++)
 	{
-  	 pos1pr->Fill(H_cal_1pr_apos_p[i]);
-	 neg1pr->Fill(H_cal_1pr_aneg_p[i]);
-	 pos2ta->Fill(H_cal_2ta_apos_p[i]);
-	 neg2ta->Fill(H_cal_2ta_aneg_p[i]);
-	 pos3ta->Fill(H_cal_3ta_apos_p[i]);
-	 neg3ta->Fill(H_cal_3ta_aneg_p[i]);
-	 pos4ta->Fill(H_cal_4ta_apos_p[i]);
-	 neg4ta->Fill(H_cal_4ta_aneg_p[i]);
+  	 hAdc[i]->Fill(H_cal_1pr_apos_p[i]);
+	 hAdc[i+13]->Fill(H_cal_1pr_aneg_p[i]);
+	 hAdc[i+26]->Fill(H_cal_2ta_apos_p[i]);
+	 hAdc[i+39]->Fill(H_cal_2ta_aneg_p[i]);
+	 hAdc[i+52]->Fill(H_cal_3ta_apos_p[i]);
+	 hAdc[i+65]->Fill(H_cal_4ta_apos_p[i]);
+
 	}
+      
 	 //	 }
 
 
@@ -956,6 +970,7 @@ void THcShowerCalib::FillHEcal() {
       Double_t P = trk.GetP();
       Double_t delta = trk.GetDp();
       Double_t Enorm = trk.Enorm();
+
       //    cout << "CalcThreshods: nev=" << nev << "  Enorm=" << Enorm << endl;
       hEcal->Fill(Enorm);
 
@@ -971,8 +986,8 @@ void THcShowerCalib::FillHEcal() {
       evFile << Enorm << "\t" << nev <<endl;
 
     }
-
-    if (nev > 300000) break;
+ 
+    if (nev > 200000) break;
   };
 
   output.close();
@@ -1008,7 +1023,7 @@ void THcShowerCalib::FillHEcalNoCor() {
       nev++;
     }
 
-    if (nev > 300000) break;
+    if (nev > 200000) break;
   };
 
   cout << "FillHEcalNoCor: " << nev << " events filled" << endl;
@@ -1033,6 +1048,13 @@ void THcShowerCalib::SaveAlphas() {
   output << "; Calibration constants for file " << fPrefix << ".root"
 	 << ", " << fNev << " events processed" << endl;
   output << endl;
+  output <<";"<< "fDeltaMin  fDeltaMax" <<"\t"<< "fBetaMin fBetaMax" <<"\t"<< "fLoThr" <<"\t"<< "fHiThr"; 
+  output << endl;
+  output <<";"<< fDeltaMin <<"\t"<< fDeltaMax <<"\t"<< fBetaMin <<"\t"<< fBetaMax <<"\t"<< fLoThr <<"\t"<< fHiThr; 
+  output << endl;
+
+
+
 
   UInt_t j = 0;
   output << "hcal_pos_gain_cor=";
@@ -1066,20 +1088,25 @@ void THcShowerCalib::SaveAlphas() {
 //------------------------------------------------------------------------------
 
 void THcShowerCalib::FillCutBranch() {
-
+  cout <<"Filling cut branches..."<<endl;
+  Int_t nev=0;
   for (UInt_t ientry=fNstart; ientry<fNstop; ientry++) 
     {
-    fTree->GetEntry(ientry);
-    hCer->Fill(H_cer_npeSum);
-    hP->Fill(H_tr_p);
-    hDelta->Fill(H_tr_tg_dp);
-    hBeta->Fill(H_tr_beta);
-    hClusTrk->Fill(H_cal_nclust,H_tr_n);  
+      fTree->GetEntry(ientry);
+      hCer->Fill(H_cer_npeSum);
+      hP->Fill(H_tr_p);
+      hDelta->Fill(H_tr_tg_dp);
+      hBeta->Fill(H_tr_beta);
+      //      hNclust->Fill(H_cal_nclust);
+      //      hNtrack->Fill(H_tr_n);
+            hClusTrk->Fill(H_cal_nclust,H_tr_n);  
+      nev++;
+      if (nev > 200000) break;
     }
 }
 
 void THcShowerCalib::FillHitsGains(){
-
+  cout <<"Filling hitd and gains ..."<<endl;
   for (UInt_t i=0; i<THcShTrack::fNpmts; i++) 
     {
       //      cout << i << "\t" << fHitCount[i] << "\t" << i % 13 <<  endl;
@@ -1093,6 +1120,13 @@ void THcShowerCalib::FillHitsGains(){
       if (i>=39 && i<52) ta4->Fill(1,i % 13 + 1, fHitCount[i]);
       if (i>=52 && i<65) pr1->Fill(2,i % 13 + 1, fHitCount[i]);
       if (i>=65        ) ta2->Fill(2,i % 13 + 1, fHitCount[i]);
+
+      if (i<13         ) pr1a->Fill(1,i % 13 + 1, falphaC[i]);
+      if (i>=13 && i<26) ta2a->Fill(1,i % 13 + 1, falphaC[i]);
+      if (i>=26 && i<39) ta3a->Fill(1,i % 13 + 1, falphaC[i]);
+      if (i>=39 && i<52) ta4a->Fill(1,i % 13 + 1, falphaC[i]);
+      if (i>=52 && i<65) pr1a->Fill(2,i % 13 + 1, falphaC[i]);
+      if (i>=65        ) ta2a->Fill(2,i % 13 + 1, falphaC[i]);
 }
 }
 
