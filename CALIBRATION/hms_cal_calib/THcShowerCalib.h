@@ -68,8 +68,8 @@ class THcShowerCalib {
   TH1F* hDelta;
   TH1F* hBeta;
 
-  //  TH1F* hNtrack;
-  //  TH1F* hNclust;
+  TH1F* hNtrack;
+  TH1F* hNclust;
 
   TH2F* hDPvsEcal;
   TH2F* hETAvsEPR;
@@ -415,8 +415,9 @@ void THcShowerCalib::Init() {
   hCer = new TH1F("hCer","H.cer.npeSum",210, -0.5, 20.5);
   hP = new TH1F("hP","H.gtr.p",100, 0, 12);
   hDelta = new TH1F("hDelta","H.gtr.dp",100, -12, 12);
-  //  hNtrack = new TH1F("hNtrack","H.dc.ntrack",51, -0.5, 50.5);
-  //  hNclust = new TH1F("hNclust","H.cal.nclust",21, -0.5, 20.5);
+  hBeta = new TH1F("hBeta","H.hod.beta",100, 0, 2);
+  hNtrack = new TH1F("hNtrack","H.dc.ntrack",51, -0.5, 50.5);
+  hNclust = new TH1F("hNclust","H.cal.nclust",21, -0.5, 20.5);
 
   hDPvsEcal = new TH2F("hDPvsEcal", "#DeltaP versus Edep/P ",
 		       150,0.,1.5, 250,-12.5,12.5);
@@ -1097,8 +1098,8 @@ void THcShowerCalib::FillCutBranch() {
       hP->Fill(H_tr_p);
       hDelta->Fill(H_tr_tg_dp);
       hBeta->Fill(H_tr_beta);
-      //      hNclust->Fill(H_cal_nclust);
-      //      hNtrack->Fill(H_tr_n);
+      hNclust->Fill(H_cal_nclust);
+      hNtrack->Fill(H_tr_n);
             hClusTrk->Fill(H_cal_nclust,H_tr_n);  
       nev++;
       if (nev > 200000) break;
