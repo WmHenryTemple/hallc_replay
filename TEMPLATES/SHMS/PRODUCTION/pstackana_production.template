@@ -66,6 +66,15 @@ SHMS 3/4 Trigger Rate           : {P.pTRIG1.scalerCut/P.1MHz.scalerTimeCut/1000.
 Accepted SHMS Triggers          : {pcut_TRIG1.npassed}
 SHMS Event Types                : {SHMS_Pretrig.npassed}
 
+
+SHMS TRIG2 Computer Live Time : {((pcut_TRIG2.npassed) / (P.pTRIG2.scaler/gpconfig_ti_ps_factors[1]))*100.0:%3.4f} %  
+
+SHMS TRIG3 Computer Live Time : {((pcut_TRIG3.npassed) / (P.pTRIG3.scaler/gpconfig_ti_ps_factors[2]))*100.0:%3.4f} %  
+
+
+SHMS TRIG6 Computer Live Time : {(pcut_TRIG6.npassed / P.pTRIG6.scaler)*100.0:%3.4f} % 
+SHMS TRIG6 Computer Dead Time : {100.0 - (pcut_TRIG6.npassed / P.pTRIG6.scaler)*100.0:%3.4f} % 
+
 =:=:=:=:=:=:=:=:=:=:=:=:
 = Physics 3/4 Triggers
 =:=:=:=:=:=:=:=:=:=:=:=:
@@ -127,10 +136,6 @@ Total Dead Time (EDTM) : {100.0 - (pcut_edtm_accepted.npassed / P.EDTM.scaler)*1
 = Live/Dead Time Calculations
 =:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:
 
-SHMS TRIG1 Computer Live Time : {(shms_trigs.npassed / (P.pTRIG1.scaler/gpconfig_ti_ps_factors[0]))*100.0:%3.2f} %
-SHMS TRIG2 Computer Live Time : {(shms_trigs.npassed / (P.pTRIG2.scaler/gpconfig_ti_ps_factors[1]))*100.0:%3.2f} %
-SHMS TRIG3 Computer Live Time : {(shms_trigs.npassed / (P.pTRIG3.scaler/gpconfig_ti_ps_factors[2]))*100.0:%3.2f} %
-
 SHMS Computer Live Time : {(pcut_TRIG1.npassed / P.pTRIG1.scaler)*100.0:%3.4f} % 
 SHMS Computer Dead Time : {100.0 - (pcut_TRIG1.npassed / P.pTRIG1.scaler)*100.0:%3.4f} % 
 
@@ -155,13 +160,13 @@ Pre-Scaled Ps2 Total Dead Time (EDTM) : {100.0 - (pcut_edtm_accepted.npassed / (
 Pre-Scaled Ps3 Total Live Time (EDTM) : {(pcut_edtm_accepted.npassed / (P.EDTM.scaler/gpconfig_ti_ps_factors[2]))*100.0:%3.4f} %
 Pre-Scaled Ps3 Total Dead Time (EDTM) : {100.0 - (pcut_edtm_accepted.npassed / (P.EDTM.scaler/gpconfig_ti_ps_factors[2]))*100.0:%3.4f} %
 
-OG 6 GeV Electronic Live Time (100, 150) : {100.0 - ((P.pPRE100.scalerCut - P.pPRE150.scalerCut)/P.pPRE100.scalerCut ):%3.4f} %
+OG 6 GeV Electronic Live Time (100, 150) : {100.0*(1. - ((P.pPRE100.scalerCut - P.pPRE150.scalerCut)/P.pPRE100.scalerCut )):%3.4f} %
 OG 6 GeV Electronic Dead Time (100, 150) : {100*((P.pPRE100.scalerCut  - P.pPRE150.scalerCut)/P.pPRE100.scalerCut):%3.4f} %
 
-OG 6 GeV Electronic Live Time (100, 200) : {100.0 - ((P.pPRE100.scalerCut - P.pPRE200.scalerCut)/P.pPRE100.scalerCut):%3.4f} %
+OG 6 GeV Electronic Live Time (100, 200) : {100.0*(1. - ((P.pPRE100.scalerCut - P.pPRE200.scalerCut)/P.pPRE100.scalerCut)):%3.4f} %
 OG 6 GeV Electronic Dead Time (100, 200) : {100*((P.pPRE100.scalerCut - P.pPRE200.scalerCut)/P.pPRE100.scalerCut):%3.4f} %
 
-OG 6 GeV Electronic Live Time (150, 200) : {100.0 - ((P.pPRE150.scalerCut - P.pPRE200.scalerCut)/P.pPRE150.scalerCut):%3.4f} %
+OG 6 GeV Electronic Live Time (150, 200) : {100.0*(1. - ((P.pPRE150.scalerCut - P.pPRE200.scalerCut)/P.pPRE150.scalerCut)):%3.4f} %
 OG 6 GeV Electronic Dead Time (150, 200) : {100*((P.pPRE150.scalerCut - P.pPRE200.scalerCut)/P.pPRE150.scalerCut):%3.4f} %
 
 3/4      Pre-Trigger 50 ns Gate  : {P.pTRIG1.scalerCut/P.1MHz.scalerTimeCut/1000.:%.3f} kHz
